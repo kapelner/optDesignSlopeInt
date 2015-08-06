@@ -1,4 +1,36 @@
-
+#' Create an optimal design for measuring the slope divided by the intercept
+#' 
+#' @param n 				The number of experimental runs.
+#' @param xmin 				The minimum value of the independent variable.
+#' @param xmax 				The maximum value of the independent variable.
+#' @param theta0 			The guess of the true value of the slope / intercept.
+#' @param f_hetero			Specification of heteroskedasticity: the h(x) which relates the value of the 
+#' 							independent variable to the variance in the response around the line at that place
+#' 							or the proportional variance at that point. If \code{NULL}, homoskedasticity is
+#' 							assumed (this is the default behavior).
+#' @param MaxIter			For the heteroskedastic design, a Nelder-Mead search is used (via the function \code{fminbnd}). 
+#' 							This is the \code{MaxIter} value for the search. Default is \code{6000}. Lower if \code{n} is high.
+#' @param MaxFunEvals		For the heteroskedastic design, a Nelder-Mead search is used (via the function \code{fminbnd}). 
+#' 							This is the \code{MaxFunEvals} value for the search. Default is \code{6000}. Lower if \code{n} is high.
+#' @param TolFun			For the heteroskedastic design, a Nelder-Mead search is used (via the function \code{fminbnd}). 
+#' 							This is the \code{TolFun} value for the search. Default is \code{1e-6}. Increase for faster execution.
+#' @param NUM_RAND_STARTS	For the heteroskedastic design, a Nelder-Mead search is used (via the function \code{fminbnd}). 
+#' 							The Nelder-Mead search must be given a starting location. Our implementation uses many
+#' 							starting locations. This parameter controls the number of additional random starting
+#' 							locations in the space \code{[xmin, xmax]}. Default is \code{50}.
+#' 
+#' @return 					An n-vector of x-values which specifies the optimal design
+#' 
+#' @author 					Adam Kapelner
+#' @export
+oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, MaxIter = 6000, MaxFunEvals = 6000, TolFun = 1e-6, NUM_RAND_STARTS = 50){
+	#throw errors here
+	if (is.null(f_hetero)){
+		oed_for_slope_over_intercept_homo(n, xmin, xmax, theta0)
+	} else {
+		oed_for_slope_over_intercept_hetero(n, xmin, xmax, theta0, f_hetero, MaxIter, MaxFunEvals, TolFun, NUM_RAND_STARTS)
+	}
+}
 
 #' Plots a standard error estimate of thetahat (slope over intercept) over a range of possible theta0 values
 #' in order to investigate robustness of the the initial theta0 guess.
@@ -58,109 +90,8 @@ std_err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_m
 	))		
 }
 
-#' Create an optimal design for measuring the slope divided by the intercept
-#' 
-#' @param n 			The number of experimental runs.
-#' @param xmin 			The minimum value of the independent variable.
-#' @param xmax 			The maximum value of the independent variable.
-#' @param theta0 		The guess of the true value of the slope / intercept.
-#' @param f_hetero		Specification of heteroskedasticity: the h(x) which relates the value of the 
-#' 						independent variable to the variance in the response around the line at that place
-#' 						or the proportional variance at that point. If \code{NULL}, homoskedasticity is
-#' 						assumed (this is the default behavior).
-#' 
-#' @return 				An n-vector of x-values which specifies the optimal design
-#' 
-#' @author 				Adam Kapelner
-#' @export
-oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, ...){
-	#throw errors here
-	if (is.null(f_hetero)){
-		oed_for_slope_over_intercept_homo(n, xmin, xmax, theta0)
-	} else {
-		oed_for_slope_over_intercept_hetero(n, xmin, xmax, theta0, f_hetero, ...)
-	}
-}
-
-#private
-oed_for_slope_over_intercept_homo = function(n, xmin, xmax, theta, f_hetero = NULL, ...){
-	rho_to_design(n, xmin, xmax, compute_rho_star_homo(xmin, xmax, theta))
-}
-
-#private
-rho_to_design = function(n, xmin, xmax, rho){
-	num_xmin = round(n * rho)
-	if (num_xmin == n){ #just in case...
-		num_xmin = num_xmin - 1
-	} else if (num_xmin == 0){
-		num_xmin = 1
-	}
-	c(rep(xmin, num_xmin), rep(xmax, n - num_xmin))	
-}
-
-#private
-plot_rho_star_by_theta = function(xmin, xmax, thetas = seq(0, 10, length.out = 100), ...){
-	rhostars = array(NA, length(thetas))		
-	for (i in 1 : length(thetas)){
-		rhostars[i] = compute_rho_star_homo(xmin, xmax, theta = thetas[i])
-	}		
-	plot(thetas, rhostars, type = "l", ...)
-}
-
-#private
-compute_rho_star_homo = function(xmin = 1, xmax = 10, theta = 1){
-	(1 + theta * xmax) / (2 + theta * (xmax + xmin))
-}
-
-##########heteroskedastic stuff
 
 
-#private
-oed_for_slope_over_intercept_hetero = function(n, xmin, xmax, theta, f_hetero, MaxIter = 6000, MaxFunEvals = 6000, TolFun = 1e-6, NUM_RAND_STARTS = 50){
-	#define the objection function in local scope so I can use theta and f_hetero without fear of conflict elsewhere
-	Q_prop = function(xs){
-		xs = as.numeric(xs)
-		#create design matrix
-		X = cbind(rep(1, length(xs)), xs)
-		#do some intermediate calculations
-		XtXinv = solve(t(X) %*% X)
-		XtSigmaX = t(X) %*% diag(f_hetero(xs)) %*% X
-		var_B = XtXinv %*% XtSigmaX %*% XtXinv
-		del_g_beta = t(as.matrix(c(-theta, 1)))
-		#asymptotic variance
-		as.numeric(del_g_beta %*% var_B %*% t(del_g_beta))
-	}
-#	f_hetero = function(x){2 - (x - xmin) / (xmax - xmin)}
-#	f_hetero = function(x){1}
-	options = optimset(MaxIter = MaxIter, MaxFunEvals = MaxFunEvals, TolFun = TolFun)
-	#use the homoskedastic as a starting point
-	
-	x_starts = rbind(
-			seq(xmin, xmax, length.out = n)
-	)
-	for (rho in seq(0, 1, length.out = 2 * n)){
-		x_starts = rbind(x_starts, rho_to_design(n, xmin, xmax, rho))
-	}
-	for (i in 1 : NUM_RAND_STARTS){
-		x_starts = rbind(x_starts, runif(n, xmin, xmax))
-	}
-	x_starts = unique(x_starts)
-	
-	sols = list()
-	#run the Nelder-Mead search from different starting points
-	for (i in 1 : nrow(x_starts)){
-#		cat(i, "\n")
-		sols[[i]] = fminbnd(Q_prop, as.numeric(x_starts[i, ]), rep(xmin - TolFun, n), rep(xmax + TolFun, n), options, verbose = F)
-	}
-	
-	sols_vals = lapply(sols, function(sol){neldermead.get(this = sol, key = "fopt")})
-	sol = sols[[which.min(sols_vals)]]
-	
-	sols_vecs = round(matrix(unlist(lapply(sols, function(sol){sort(neldermead.get(this = sol, key = "xopt")[,1])})), nrow = length(sols), byrow = TRUE), 2)
-	sols_vecs
-	#return the result as a sorted array for convenience
-	sort(neldermead.get(this = sol, key = "xopt")[, 1])	
-}
 
 
 #' A visualiation for comparing slope-divided-by-intercept estimates
@@ -175,7 +106,7 @@ oed_for_slope_over_intercept_hetero = function(n, xmin, xmax, theta, f_hetero, M
 #' @param l_quantile_display 		The lowest quantile of the simulation estimates displayed. Default is \code{0.025}.
 #' @param u_quantile_display 		The highest quantile of the simulation estimates displayed. Default is \code{0.975}.
 #' @param error_est 				The error metric for the estimates. The sample standard deviation (i.e. \code{sd}) 
-#' 									is unstable at low sample sizes. The default is the 90%ile minus the 10%ile.
+#' 									is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.
 #' @param draw_theta_at 			If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 #' 									it is specified here. The default is \code{NULL} with no line being drawn.
 #' 
@@ -228,10 +159,17 @@ design_bakeoff = function(xmin, xmax, designs,
 #' @export
 experimental_results = function(ys, xs, alpha = 0.05){
 	mod = lm(ys ~ xs)
-	est = coef(mod_opt)[2] / coef(mod_opt)[1]
-
+	b0 = coef(mod_opt)[1]
+	b1 = coef(mod_opt)[2]
+	thetahat = b1 / b0 
+	n = length(xs)
+	
+	X = cbind(rep(1, n), xs)
+	XtXinv = solve(t(X) %*% X)
+	
+	
 	list(
-		est = est,
+		thetahat = thetahat
 		
 	)
 }

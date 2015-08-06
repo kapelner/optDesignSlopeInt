@@ -1,0 +1,13 @@
+citHeader("")
+
+citEntry(
+     entry       = "unpublished",
+	 title       = "TK",
+	 note		 = "working paper",
+	 author      = personList(as.person("Adam Kapelner"), as.person("Abba Krieger"), as.person("William J. Blanford")),
+	 year        = "2015", 
+	 textVersion = "Kapelner, A., Krieger, A., Blanford, W. J., 
+					TK (2015)
+					working paper",
+	 header      = "To cite the optDesignSlopeInt package in publications, please use:"
+)
