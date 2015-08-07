@@ -46,47 +46,70 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 #' @param sigsq 		A guess to be used for the homoskedastic variance of the measurement errors. If known accurately,
 #' 						then the standard errors (i.e. the y-axis on the plot) will be accurate. Otherwise, the standard
 #' 						errors are useful only when compared to each other in a relative sense. Defaults to \code{1}.
+#' @param error_est 	The error metric for the estimates. The sample standard deviation (i.e. \code{sd}) 
+#' 						is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.
 #' @param RES 			The number of points on the x-axis to simulate. Higher numbers will give smoother results. Default is \code{20}.
 #' @param Nsim 			The number of models to be simulated for estimating the standard error at each value on the x-axis. Default is \code{1000}.
 #' @param theta_logged	Should the values of theta be logged? Default is \code{TRUE}.
+#' @param ...			Additional arguments passed to the \code{plot} function.
 #' 
 #' @return 				A list with original parameters as well as data from the simulation
 #' 
 #' @author 				Adam Kapelner
 #' @export
-std_err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, theta0_max, theta0 = NULL, beta0 = 1, sigsq = 1, RES = 20, Nsim = 1000, theta_logged = TRUE){
-	theta0s = seq(theta0_min, theta0_max, length.out = RES)
-
-	homo_designs = matrix(NA, nrow = 0, ncol = n)
-	for (i in 1 : RES){		
-		homo_designs = rbind(homo_designs, oed_for_slope_over_intercept_homo(n, xmin, xmax, theta0s[i]))
+err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, theta0_max, 
+		theta0 = NULL, beta0 = 1, sigsq = 1, RES = 20, Nsim = 1000, 
+		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile
+		theta_logged = TRUE, ...){
+	if (theta_logged){
+		theta0s = seq(log(theta0_min), log(theta0_max), length.out = RES) / log(10)
+	} else {
+		theta0s = seq(theta0_min, theta0_max, length.out = RES)
 	}
 	
-	std_errors = array(NA, RES)
+
+	homo_designs = matrix(NA, nrow = 0, ncol = n)
+	for (i in 1 : RES){
+		homo_designs = rbind(homo_designs, oed_for_slope_over_intercept_homo(n, xmin, xmax, ifelse(theta_logged, 10^(theta0s[i]), theta0s[i])))
+	}
+	
+	error_ests = array(NA, RES)
 	for (d in 1 : RES){
 		ests_opt = array(NA, Nsim)
-		for (nsim in 1 : Nsim){
-			xs_opt = homo_designs[d, ]			
+		xs_opt = homo_designs[d, ]
+		for (nsim in 1 : Nsim){						
 			ys_opt = beta0 + theta  * beta0 * xs_opt + rnorm(n, 0, sqrt(sigsq))			
 			mod_opt = lm(ys_opt ~ xs_opt)			
 			ests_opt[nsim] = coef(mod_opt)[2] / coef(mod_opt)[1]
 		}
-		std_errors[i] = sd(ests_opt)
+		error_ests[d] = error_est(ests_opt)
 	}	
 	
-	plot(theta0s, std_errors, type = "l", col = "grey", ylab = "standard error of theta-hat", xlab = "theta0 hypothesis")
-	opt_design = oed_for_slope_over_intercept_homo(n, xmin, xmax, theta0)
-	true_rhostar = sum(opt_design == xmin) / n
-	abline(v = true_rhostar, col = "blue")
+	plot(theta0s, error_ests, 
+			type = "l", 
+			col = "grey", 
+			ylab = "error of theta-hat", 
+			xlab = ifelse(theta_logged, "log_10(theta0) hypothesis", "theta0 hypothesis"),
+			...)
+	
+	if (!is.null(theta0)){
+		abline(v = ifelse(theta_logged, log(theta0) / log(10), theta0), col = "red")
+		abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")		
+	}
 
-	lines(theta0s, predict(loess(std_errors ~ theta0s)), col = "black", lwd = 2)
+
+	lines(theta0s, predict(loess(error_ests ~ theta0s)), col = "black", lwd = 2)
+	
+	
 	#return the simulated results only if user cares
 	invisible(list(
 		n = n,
 		xmin = xmin,
 		xmax = xmax,
 		theta = theta, 
-		res = cbind(theta0s, std_errors)
+		theta_logged = theta_logged,
+		theta_vs_design = cbind(ifelse(rep(theta_logged, RES), 10^(theta0s), theta0s), homo_designs),
+		theta_vs_error_ests = cbind(ifelse(rep(theta_logged, RES), 10^(theta0s), theta0s), error_ests)
 	))		
 }
 
@@ -109,6 +132,7 @@ std_err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_m
 #' 									is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.
 #' @param draw_theta_at 			If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 #' 									it is specified here. The default is \code{NULL} with no line being drawn.
+#' @param ...						Additional arguments passed to the \bode{boxplot} function.
 #' 
 #' @return 							A list with the simulated estimates and error estimates for each design.
 #' 
@@ -118,7 +142,7 @@ design_bakeoff = function(xmin, xmax, designs,
 		gen_resp = function(xs){1 + 2 * xs + rnorm(length(xs), 0, 1)}, 
 		Nsim = 1000, l_quantile_display = 0.025, u_quantile_display = 0.975,
 		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile
-		draw_theta_at = NULL){
+		draw_theta_at = NULL, ...){
 	num_designs = nrow(designs)
 	n = ncol(designs)
 	
@@ -140,7 +164,10 @@ design_bakeoff = function(xmin, xmax, designs,
 	}
 	boxplot(l, ylim = quantile(c(ests), c(l_quantile_display, u_quantile_display)), 
 			main = "Bakeoff: Error Estimates for Many Designs",  
-			ylab = "theta-hat", xlab = paste("Error Results:", paste(round(error_ests, 2), collapse = ", ")), names = 1 : num_designs)
+			ylab = "theta-hat", 
+			xlab = paste("Error Results:", paste(round(error_ests, 2), collapse = ", ")), 
+			names = 1 : num_designs,
+			...)
 	if (!is.null(draw_theta_at)){
 		abline(h = draw_theta_at, col = "blue")
 	}
