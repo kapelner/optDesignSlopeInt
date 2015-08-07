@@ -18,13 +18,10 @@ designs = rbind(
 gen_resp = function(xs, beta0 = 1){
 	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, 1)
 }
-res = design_bakeoff(xmin, xmax, designs, draw_theta_at = theta0, 
-		error_est = sd,
+res = design_bakeoff(xmin, xmax, designs, draw_theta_at = theta0,
 		gen_resp = gen_resp, Nsim = 10000)
-#to get the rmse
+#to get the rmse (similar to standard error)
 lapply(res$ests, function(ests){sqrt(sum((ests - theta0)^2) / 10000)})
-#to get the center of the distribution
-lapply(res$ests, function(ests){quantile(ests, 0.9) - quantile(ests, 0.1)})
 
 
 

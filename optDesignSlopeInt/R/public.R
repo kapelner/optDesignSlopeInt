@@ -186,17 +186,39 @@ design_bakeoff = function(xmin, xmax, designs,
 #' @export
 experimental_results = function(ys, xs, alpha = 0.05){
 	mod = lm(ys ~ xs)
-	b0 = coef(mod_opt)[1]
-	b1 = coef(mod_opt)[2]
+	b0 = coef(mod)[1]
+	b1 = coef(mod)[2]
 	thetahat = b1 / b0 
+	es = mod$residuals
+	s_e = summary(mod)$sigma
 	n = length(xs)
 	
 	X = cbind(rep(1, n), xs)
 	XtXinv = solve(t(X) %*% X)
 	
+	cis = data.frame(matrix(NA, nrow = 7, ncol = 2))
+	colnames = c("lower", "upper")
+	rownames(cis) = c(
+		"Normal Approx Homo",
+		"Normal Approx Hetero",
+		"Ratio Density",
+		"Bayesian Weighting",
+		"Parametric Homo",
+		"Nonparametric Homo",
+		"Nonparametric Hetero"
+	)
+	#now generate them outside
+	cis[1, ] = normal_approx_homo_ci(alpha, b0, b1, XtXinv, s_e) 
+	cis[2, ] = normal_approx_hetero_ci(alpha, b0, b1, XtXinv, s_e, xs, es)
+	cis[3, ] = ratio_density_ci(alpha, b0, b1, XtXinv, s_e)
+	cis[4, ] = bayesian_weighting_ci(alpha, xs, ys)
+	cis[5, ] = param_homo(alpha, b0, b1, s_e, xs)
+	cis[6, ] = nonparam_homo(alpha, ys, es)
+	cis[7, ] = nonparam_hetero(alpha, ys, es)
 	
 	list(
-		thetahat = thetahat
-		
+		thetahat = thetahat,
+		cis = cis,
+		alpha = alpha
 	)
 }
