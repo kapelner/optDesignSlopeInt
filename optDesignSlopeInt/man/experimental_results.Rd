@@ -4,7 +4,7 @@
 \alias{experimental_results}
 \title{Report the results of the experiment as well as confidence intervals.}
 \usage{
-experimental_results(ys, xs, alpha = 0.05)
+experimental_results(ys, xs, alpha = 0.05, B = 1000)
 }
 \arguments{
 \item{ys}{The measurements of the response}
@@ -12,6 +12,9 @@ experimental_results(ys, xs, alpha = 0.05)
 \item{xs}{The design}
 
 \item{alpha}{\code{1 - alpha} is the confidence of the computed intervals. Default is \code{0.05}.}
+
+\item{B}{For the confidence interval methods with an embedded bootstrap (or resampling), the number
+                    of resamples (defaults to \code{1000}).}
 }
 \value{
 A list of the estimate as well as confidence intervals

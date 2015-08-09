@@ -8,7 +8,7 @@ for a number of designs}
 design_bakeoff(xmin, xmax, designs, gen_resp = function(xs) {     1 + 2 * xs +
   rnorm(length(xs), 0, 1) }, Nsim = 1000, l_quantile_display = 0.025,
   u_quantile_display = 0.975, error_est = function(est) {     quantile(est,
-  0.9) - quantile(est, 0.1) }, draw_theta_at = NULL)
+  0.9) - quantile(est, 0.1) }, draw_theta_at = NULL, ...)
 }
 \arguments{
 \item{xmin}{The minimum value of the independent variable.}
@@ -30,7 +30,9 @@ used to run the experiment).}
 is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.}
 
 \item{draw_theta_at}{If the user wishes to draw a horizontal line marking theta (to checked biasedness)
-                                    it is specified here. The default is \code{NULL} with no line being drawn.}
+it is specified here. The default is \code{NULL} with no line being drawn.}
+
+\item{...}{Additional arguments passed to the \bode{boxplot} function.}
 }
 \value{
 A list with the simulated estimates and error estimates for each design.

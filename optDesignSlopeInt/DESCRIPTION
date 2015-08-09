@@ -10,4 +10,5 @@ Description: Software which helps practitioners optimally design experiments tha
 License: GPL2
 Depends:
     R (>= 3.0),
-    neldermead
+    neldermead,
+    MCMCpack

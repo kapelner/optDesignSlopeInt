@@ -8,7 +8,7 @@ in order to investigate robustness of the the initial theta0 guess.}
 err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta, theta0_min, theta0_max,
   theta0 = NULL, beta0 = 1, sigsq = 1, RES = 20, Nsim = 1000,
   error_est = function(est) {     quantile(est, 0.9) - quantile(est, 0.1) },
-  theta_logged = TRUE)
+  theta_logged = TRUE, ...)
 }
 \arguments{
 \item{n}{The number of experimental runs.}
@@ -38,6 +38,8 @@ errors are useful only when compared to each other in a relative sense. Defaults
 is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.}
 
 \item{theta_logged}{Should the values of theta be logged? Default is \code{TRUE}.}
+
+\item{...}{Additional arguments passed to the \code{plot} function.}
 }
 \value{
 A list with original parameters as well as data from the simulation

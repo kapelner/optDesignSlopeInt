@@ -6,7 +6,7 @@
 #' @author 		Adam Kapelner \email{kapelner@@qc.cuny.edu}
 #' @references 	TK
 #' @keywords 	Experimental Design, Slope divided by intercept
-#' @import      neldermead
+#' @import      neldermead MCMCpack
 ##### Run "library(roxygen2); roxygenise("optDesignSlopeInt", clean = TRUE)" to regenerate all Rd files and NAMESPACE and DESCRIPTION file
 ##### but make sure you are in the root directory of the project
 NULL

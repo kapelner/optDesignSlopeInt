@@ -176,15 +176,17 @@ design_bakeoff = function(xmin, xmax, designs,
 
 #' Report the results of the experiment as well as confidence intervals.
 #' 
-#' @param ys 		The measurements of the response
 #' @param xs 		The design
+#' @param ys 		The measurements of the response
 #' @param alpha		\code{1 - alpha} is the confidence of the computed intervals. Default is \code{0.05}.
+#' @param B			For the confidence interval methods with an embedded bootstrap (or resampling), the number
+#' 					of resamples (defaults to \code{1000}).
 #' 
-#' @return			A list of the estimate as well as confidence intervals 
+#' @return			A list of the estimate as well as confidence intervals and parameters 
 #' 
 #' @author			Adam Kapelner
 #' @export
-experimental_results = function(ys, xs, alpha = 0.05){
+experimental_results = function(xs, ys, alpha = 0.05, B = 1000){
 	mod = lm(ys ~ xs)
 	b0 = coef(mod)[1]
 	b1 = coef(mod)[2]
@@ -209,16 +211,17 @@ experimental_results = function(ys, xs, alpha = 0.05){
 	)
 	#now generate them outside
 	cis[1, ] = normal_approx_homo_ci(alpha, b0, b1, XtXinv, s_e) 
-	cis[2, ] = normal_approx_hetero_ci(alpha, b0, b1, XtXinv, s_e, xs, es)
+	cis[2, ] = normal_approx_hetero_ci(alpha, b0, b1, X, XtXinv, xs, es)
 	cis[3, ] = ratio_density_ci(alpha, b0, b1, XtXinv, s_e)
-	cis[4, ] = bayesian_weighting_ci(alpha, xs, ys)
-	cis[5, ] = param_homo(alpha, b0, b1, s_e, xs)
-	cis[6, ] = nonparam_homo(alpha, ys, es)
-	cis[7, ] = nonparam_hetero(alpha, ys, es)
+	cis[4, ] = bayesian_weighting_ci(alpha, B, n, xs, ys)
+	cis[5, ] = param_homo_ci(alpha, B, b0, b1, s_e, n, xs)
+	cis[6, ] = nonparam_homo_ci(alpha, B, xs, ys, es)
+	cis[7, ] = nonparam_hetero_ci(alpha, B, n, xs, ys, es)
 	
 	list(
 		thetahat = thetahat,
 		cis = cis,
-		alpha = alpha
+		alpha = alpha,
+		B = B
 	)
 }
