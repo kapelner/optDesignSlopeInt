@@ -199,7 +199,7 @@ experimental_results = function(xs, ys, alpha = 0.05, B = 1000){
 	XtXinv = solve(t(X) %*% X)
 	
 	cis = data.frame(matrix(NA, nrow = 7, ncol = 2))
-	colnames = c("lower", "upper")
+	colnames(cis) = c("lower", "upper")
 	rownames(cis) = c(
 		"Normal Approx Homo",
 		"Normal Approx Hetero",
