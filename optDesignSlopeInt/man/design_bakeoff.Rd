@@ -32,7 +32,7 @@ is unstable at low sample sizes. The default is the 90 percentile minus the 10 p
 \item{draw_theta_at}{If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 it is specified here. The default is \code{NULL} with no line being drawn.}
 
-\item{...}{Additional arguments passed to the \bode{boxplot} function.}
+\item{...}{Additional arguments passed to the \code{boxplot} function.}
 }
 \value{
 A list with the simulated estimates and error estimates for each design.

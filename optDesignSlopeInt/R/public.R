@@ -132,7 +132,7 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 #' 									is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.
 #' @param draw_theta_at 			If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 #' 									it is specified here. The default is \code{NULL} with no line being drawn.
-#' @param ...						Additional arguments passed to the \bode{boxplot} function.
+#' @param ...						Additional arguments passed to the \code{boxplot} function.
 #' 
 #' @return 							A list with the simulated estimates and error estimates for each design.
 #' 
@@ -182,7 +182,7 @@ design_bakeoff = function(xmin, xmax, designs,
 #' @param B			For the confidence interval methods with an embedded bootstrap (or resampling), the number
 #' 					of resamples (defaults to \code{1000}).
 #' 
-#' @return			A list of the estimate as well as confidence intervals and parameters 
+#' @return			A list object containing the estimate as well as confidence intervals and parameters.
 #' 
 #' @author			Adam Kapelner
 #' @export
@@ -198,29 +198,29 @@ experimental_results = function(xs, ys, alpha = 0.05, B = 1000){
 	X = cbind(rep(1, n), xs)
 	XtXinv = solve(t(X) %*% X)
 	
-	cis = data.frame(matrix(NA, nrow = 7, ncol = 2))
+	cis = data.frame(matrix(NA, nrow = 0, ncol = 2))
 	colnames(cis) = c("lower", "upper")
+	#now generate them outside
+	cis = rbind(
+		normal_approx_homo_ci(alpha, b0, b1, XtXinv, s_e),
+		normal_approx_hetero_ci(alpha, b0, b1, X, XtXinv, n, xs, es),
+		bayesian_weighting_ci(alpha, B, n, xs, ys),
+		param_homo_ci(alpha, B, b0, b1, s_e, n, xs),
+		nonparam_homo_ci(alpha, B, xs, ys, es),
+		nonparam_hetero_ci(alpha, B, n, xs, ys, es)
+	)
 	rownames(cis) = c(
-		"Normal Approx Homo",
-		"Normal Approx Hetero",
-		"Ratio Density",
+		"Normal Approx Homo (poor coverage)",
+		"Normal Approx Hetero (poor coverage)",
 		"Bayesian Weighting",
 		"Parametric Homo",
 		"Nonparametric Homo",
 		"Nonparametric Hetero"
-	)
-	#now generate them outside
-	cis[1, ] = normal_approx_homo_ci(alpha, b0, b1, XtXinv, s_e) 
-	cis[2, ] = normal_approx_hetero_ci(alpha, b0, b1, X, XtXinv, xs, es)
-	cis[3, ] = ratio_density_ci(alpha, b0, b1, XtXinv, s_e)
-	cis[4, ] = bayesian_weighting_ci(alpha, B, n, xs, ys)
-	cis[5, ] = param_homo_ci(alpha, B, b0, b1, s_e, n, xs)
-	cis[6, ] = nonparam_homo_ci(alpha, B, xs, ys, es)
-	cis[7, ] = nonparam_hetero_ci(alpha, B, n, xs, ys, es)
-	
+	)	
 	list(
 		thetahat = thetahat,
 		cis = cis,
+		n = n,
 		alpha = alpha,
 		B = B
 	)

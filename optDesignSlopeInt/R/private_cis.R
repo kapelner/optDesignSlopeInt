@@ -6,7 +6,7 @@ normal_approx_homo_ci = function(alpha, b0, b1, XtXinv, s_e){
 	c(est - moe, est + moe)	
 }
 
-normal_approx_hetero_ci = function(alpha, b0, b1, X, XtXinv, xs, es){
+normal_approx_hetero_ci = function(alpha, b0, b1, X, XtXinv, n, xs, es){
 	z = qnorm(1 - alpha / 2)
 	est = b1 / b0
 	del_g_beta_hat = t(as.matrix(c(-est, 1)))

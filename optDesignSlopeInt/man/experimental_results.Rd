@@ -4,12 +4,12 @@
 \alias{experimental_results}
 \title{Report the results of the experiment as well as confidence intervals.}
 \usage{
-experimental_results(ys, xs, alpha = 0.05, B = 1000)
+experimental_results(xs, ys, alpha = 0.05, B = 1000)
 }
 \arguments{
-\item{ys}{The measurements of the response}
-
 \item{xs}{The design}
+
+\item{ys}{The measurements of the response}
 
 \item{alpha}{\code{1 - alpha} is the confidence of the computed intervals. Default is \code{0.05}.}
 
@@ -17,7 +17,7 @@ experimental_results(ys, xs, alpha = 0.05, B = 1000)
                     of resamples (defaults to \code{1000}).}
 }
 \value{
-A list of the estimate as well as confidence intervals
+A list of the estimate as well as confidence intervals and parameters
 }
 \description{
 Report the results of the experiment as well as confidence intervals.
