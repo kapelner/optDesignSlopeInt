@@ -141,7 +141,7 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 design_bakeoff = function(xmin, xmax, designs, 
 		gen_resp = function(xs){1 + 2 * xs + rnorm(length(xs), 0, 1)}, 
 		Nsim = 1000, l_quantile_display = 0.025, u_quantile_display = 0.975,
-		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile
+		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile i.e the interdecile range
 		draw_theta_at = NULL, ...){
 	num_designs = nrow(designs)
 	n = ncol(designs)

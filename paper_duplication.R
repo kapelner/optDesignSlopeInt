@@ -170,3 +170,32 @@ for (i in 1 : Nsim){
 }
 rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
 
+
+
+
+
+xmin = 0.3379
+xmax = 14.437
+n = 10
+theta0 = 5.3e-11
+
+opt_homo_design = oed_for_slope_over_intercept(n, xmin, xmax, theta0)
+
+
+designs = rbind(
+		seq(xmin, xmax, length.out = n),
+		opt_homo_design
+)
+
+sigma = 2.533273e-11
+
+gen_resp = function(xs, beta0 = 8e-11){
+	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, sigma)
+}
+res = design_bakeoff(xmin, xmax, designs, 
+		draw_theta_at = theta0,
+		gen_resp = gen_resp, 
+		Nsim = 10000)
+
+sd(res$ests[[2]]) / sd(res$ests[[1]])
+
