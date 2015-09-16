@@ -43,7 +43,7 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 #' 						value plotted. Default is \code{NULL}.
 #' @param theta0_min 	Simulating over different guesses of theta0, this is the minimum guess.
 #' @param theta0_max 	Simulating over different guesses of theta0, this is the maximum guess.
-#' @param sigsq 		A guess to be used for the homoskedastic variance of the measurement errors. If known accurately,
+#' @param sigma 		A guess to be used for the homoskedastic variance of the measurement errors. If known accurately,
 #' 						then the standard errors (i.e. the y-axis on the plot) will be accurate. Otherwise, the standard
 #' 						errors are useful only when compared to each other in a relative sense. Defaults to \code{1}.
 #' @param error_est 	The error metric for the estimates. The sample standard deviation (i.e. \code{sd}) 
@@ -51,6 +51,8 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 #' @param RES 			The number of points on the x-axis to simulate. Higher numbers will give smoother results. Default is \code{20}.
 #' @param Nsim 			The number of models to be simulated for estimating the standard error at each value on the x-axis. Default is \code{1000}.
 #' @param theta_logged	Should the values of theta be logged? Default is \code{TRUE}.
+#' @param error_pct		Plot error as a percentage increase from minimum. Default is \code{TRUE}.
+#' @param plot_rhos		Plot an additional graph of rho by theta0. Default is \code{FALSE}.
 #' @param ...			Additional arguments passed to the \code{plot} function.
 #' 
 #' @return 				A list with original parameters as well as data from the simulation
@@ -58,9 +60,9 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 #' @author 				Adam Kapelner
 #' @export
 err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, theta0_max, 
-		theta0 = NULL, beta0 = 1, sigsq = 1, RES = 20, Nsim = 1000, 
+		theta0 = NULL, beta0 = 1, sigma = 1, RES = 500, Nsim = 5000, 
 		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile
-		theta_logged = TRUE, ...){
+		theta_logged = TRUE, error_pct = TRUE, plot_rhos = FALSE, ...){
 	if (theta_logged){
 		theta0s = seq(log(theta0_min), log(theta0_max), length.out = RES) / log(10)
 	} else {
@@ -70,36 +72,76 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 
 	homo_designs = matrix(NA, nrow = 0, ncol = n)
 	for (i in 1 : RES){
-		homo_designs = rbind(homo_designs, oed_for_slope_over_intercept_homo(n, xmin, xmax, ifelse(theta_logged, 10^(theta0s[i]), theta0s[i])))
+		homo_design = oed_for_slope_over_intercept_homo(n, xmin, xmax, ifelse(theta_logged, 10^(theta0s[i]), theta0s[i]))
+		homo_designs = rbind(homo_designs, homo_design)
 	}
 	
-	error_ests = array(NA, RES)
-	for (d in 1 : RES){
+	unique_homo_designs = unique(homo_designs)
+	unique_homo_designs
+	unique_rhos = apply(unique_homo_designs, 1, function(row){sum(row == xmin) / n})
+	
+	unique_error_ests = array(NA, nrow(unique_homo_designs))
+	for (d in 1 : nrow(unique_homo_designs)){
 		ests_opt = array(NA, Nsim)
-		xs_opt = homo_designs[d, ]
+		xs_opt = unique_homo_designs[d, ]
 		for (nsim in 1 : Nsim){						
-			ys_opt = beta0 + theta  * beta0 * xs_opt + rnorm(n, 0, sqrt(sigsq))			
+			ys_opt = beta0 + theta  * beta0 * xs_opt + rnorm(n, 0, sigma)			
 			mod_opt = lm(ys_opt ~ xs_opt)			
 			ests_opt[nsim] = coef(mod_opt)[2] / coef(mod_opt)[1]
 		}
-		error_ests[d] = error_est(ests_opt)
-	}	
+		unique_error_ests[d] = error_est(ests_opt)
+	}
 	
-	plot(theta0s, error_ests, 
-			type = "l", 
-			col = "grey", 
-			ylab = "error of theta-hat", 
-			xlab = ifelse(theta_logged, "log_10(theta0) hypothesis", "theta0 hypothesis"),
-			...)
+	#now we need to realign the uniques
+	error_ests = array(NA, RES)
+	rhos = array(NA, RES)
+	for (i in 1 : RES){
+		homo_design = homo_designs[i, ]
+		#get index in the unique set
+		ind = apply(unique_homo_designs, 1, function(row){all(row == homo_design)}) 
+		error_ests[i] = unique_error_ests[ind]
+		rhos[i] = unique_rhos[ind]
+	}
 	
+	if (plot_rhos){
+		par(mfrow = c(1, 2))
+	}
+	
+	if (error_pct){
+		error_ests_pct = (error_ests - min(error_ests)) / min(error_ests) * 100
+		plot(theta0s, error_ests_pct, 
+				type = "l", 
+				ylab = "% increase in optimal error of theta-hat", 
+				xlab = ifelse(theta_logged, "log_10(theta0) hypothesis", "theta0 hypothesis"),
+				...)		
+	} else {
+		plot(theta0s, error_ests, 
+				type = "l", 
+				ylab = "error of theta-hat", 
+				xlab = ifelse(theta_logged, "log_10(theta0) hypothesis", "theta0 hypothesis"),
+				...)		
+	}
+		
+		
+
+	
+	abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")
 	if (!is.null(theta0)){
 		abline(v = ifelse(theta_logged, log(theta0) / log(10), theta0), col = "red")
-		abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")		
 	}
-
-
-	lines(theta0s, predict(loess(error_ests ~ theta0s)), col = "black", lwd = 2)
 	
+	if (plot_rhos){
+		plot(theta0s, rhos, 
+				type = "l", 
+				ylab = "rho", 
+				xlab = ifelse(theta_logged, "log_10(theta0) hypothesis", "theta0 hypothesis"),
+				...)
+		
+		abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")
+		if (!is.null(theta0)){
+			abline(v = ifelse(theta_logged, log(theta0) / log(10), theta0), col = "red")
+		}
+	}	
 	
 	#return the simulated results only if user cares
 	invisible(list(
@@ -109,7 +151,7 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 		theta = theta, 
 		theta_logged = theta_logged,
 		theta_vs_design = cbind(ifelse(rep(theta_logged, RES), 10^(theta0s), theta0s), homo_designs),
-		theta_vs_error_ests = cbind(ifelse(rep(theta_logged, RES), 10^(theta0s), theta0s), error_ests)
+		theta_vs_error_ests = cbind(ifelse(rep(theta_logged, RES), 10^(theta0s), theta0s), unique_error_ests)
 	))		
 }
 
