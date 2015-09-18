@@ -172,6 +172,7 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 #' @param u_quantile_display 		The highest quantile of the simulation estimates displayed. Default is \code{0.975}.
 #' @param error_est 				The error metric for the estimates. The sample standard deviation (i.e. \code{sd}) 
 #' 									is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.
+#' @param num_digits_round			The number of digits to round the error results. Default is 2.
 #' @param draw_theta_at 			If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 #' 									it is specified here. The default is \code{NULL} with no line being drawn.
 #' @param ...						Additional arguments passed to the \code{boxplot} function.
@@ -184,6 +185,7 @@ design_bakeoff = function(xmin, xmax, designs,
 		gen_resp = function(xs){1 + 2 * xs + rnorm(length(xs), 0, 1)}, 
 		Nsim = 1000, l_quantile_display = 0.025, u_quantile_display = 0.975,
 		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile i.e the interdecile range
+		num_digits_round = 2,
 		draw_theta_at = NULL, ...){
 	num_designs = nrow(designs)
 	n = ncol(designs)
@@ -207,7 +209,7 @@ design_bakeoff = function(xmin, xmax, designs,
 	boxplot(l, ylim = quantile(c(ests), c(l_quantile_display, u_quantile_display)), 
 			main = "Bakeoff: Error Estimates for Many Designs",  
 			ylab = "theta-hat", 
-			xlab = paste("Error Results:", paste(round(error_ests, 2), collapse = ", ")), 
+			xlab = paste("Error Results:", paste(round(error_ests, num_digits_round), collapse = ", ")), 
 			names = 1 : num_designs,
 			...)
 	if (!is.null(draw_theta_at)){

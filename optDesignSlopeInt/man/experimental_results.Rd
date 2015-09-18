@@ -17,7 +17,7 @@ experimental_results(xs, ys, alpha = 0.05, B = 1000)
                     of resamples (defaults to \code{1000}).}
 }
 \value{
-A list of the estimate as well as confidence intervals and parameters
+A list object containing the estimate as well as confidence intervals and parameters.
 }
 \description{
 Report the results of the experiment as well as confidence intervals.

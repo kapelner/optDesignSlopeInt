@@ -6,9 +6,9 @@
 in order to investigate robustness of the the initial theta0 guess.}
 \usage{
 err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta, theta0_min, theta0_max,
-  theta0 = NULL, beta0 = 1, sigsq = 1, RES = 20, Nsim = 1000,
+  theta0 = NULL, beta0 = 1, sigma = 1, RES = 500, Nsim = 5000,
   error_est = function(est) {     quantile(est, 0.9) - quantile(est, 0.1) },
-  theta_logged = TRUE, ...)
+  theta_logged = TRUE, error_pct = TRUE, plot_rhos = FALSE, ...)
 }
 \arguments{
 \item{n}{The number of experimental runs.}
@@ -26,7 +26,7 @@ err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta, theta0_min, theta0_max,
 \item{theta0}{The guess used to construct the experimental design. Specify only if you wish to see this
 value plotted. Default is \code{NULL}.}
 
-\item{sigsq}{A guess to be used for the homoskedastic variance of the measurement errors. If known accurately,
+\item{sigma}{A guess to be used for the homoskedastic variance of the measurement errors. If known accurately,
 then the standard errors (i.e. the y-axis on the plot) will be accurate. Otherwise, the standard
 errors are useful only when compared to each other in a relative sense. Defaults to \code{1}.}
 
@@ -38,6 +38,10 @@ errors are useful only when compared to each other in a relative sense. Defaults
 is unstable at low sample sizes. The default is the 90 percentile minus the 10 percentile.}
 
 \item{theta_logged}{Should the values of theta be logged? Default is \code{TRUE}.}
+
+\item{error_pct}{Plot error as a percentage increase from minimum. Default is \code{TRUE}.}
+
+\item{plot_rhos}{Plot an additional graph of rho by theta0. Default is \code{FALSE}.}
 
 \item{...}{Additional arguments passed to the \code{plot} function.}
 }

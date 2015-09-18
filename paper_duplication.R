@@ -175,7 +175,7 @@ rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
 library(optDesignSlopeInt)
 
 #the "true value" of the k_H of toluene
-theta = 0.5
+theta = 0.05
 #load the raw data in and plot
 X = as.data.frame(read.csv("~/Downloads/toluene.csv"))
 plot(X$x, X$y)
@@ -223,6 +223,67 @@ par(mfrow = c(1, 1))
 res = design_bakeoff(xmin, xmax, designs, 
 		draw_theta_at = theta,
 		gen_resp = gen_resp, 
+		Nsim = 10000)
+
+sd(res$ests[[3]]) / sd(res$ests[[1]])
+
+
+
+
+###################
+
+#the "true value" of the k_H of naphthalene
+theta = 0.05
+#load the raw data in and plot
+X = as.data.frame(read.csv("~/Dropbox/oed_kh_project/paper/naphthalene.csv"))
+plot(X$x, X$y)
+#make a judgment call on what the x-range is for GC instrument
+xmin = 0.3379
+xmax = 14.437
+#only consider the data in this range
+Xr = X[X$x > xmin & X$x < xmax, ]
+plot(Xr$x, Xr$y)
+#run a regression to get a guess of what sigma is only
+mod = lm(Xr$y ~ Xr$x)
+summary(mod)
+beta0 = coef(mod)[1]
+sigma = summary(mod)$sigma
+
+
+
+#in the future, we will be running experiments with 10 vials
+n = 10
+
+#investigate how our guess of theta0 will affect our results. Use a range of 0.01 to 10 since
+#we are almost absolutely sure the k_H must fall in this window.
+err_det = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta = theta, 
+		Nsim = 10000, sigma = sigma,
+		theta0_min = 0.01, theta0_max = 10, plot_rhos = TRUE)
+
+#as an example show what happens if theta is 0.5 instead and graph the truth in green
+err_det = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta = 0.5, 
+		Nsim = 10000, sigma = sigma, theta0 = theta,
+		theta0_min = 0.01, theta0_max = 10, plot_rhos = TRUE)
+
+
+opt_homo_design = oed_for_slope_over_intercept(n, xmin, xmax, theta)
+
+
+designs = rbind(
+		seq(xmin, xmax, length.out = n),
+		c(rep(xmin, n / 2), rep(xmax, n / 2)),
+		opt_homo_design
+)
+
+
+gen_resp = function(xs){
+	beta0 + beta0 * theta * xs + rnorm(length(xs), 0, sigma)
+}
+par(mfrow = c(1, 1))
+res = design_bakeoff(xmin, xmax, designs, 
+		draw_theta_at = theta,
+		gen_resp = gen_resp, 
+		num_digits_round = 4,
 		Nsim = 10000)
 
 sd(res$ests[[3]]) / sd(res$ests[[1]])
