@@ -235,7 +235,7 @@ sd(res$ests[[3]]) / sd(res$ests[[1]])
 #the "true value" of the k_H of naphthalene
 theta = 0.05
 #load the raw data in and plot
-X = as.data.frame(read.csv("~/Dropbox/oed_kh_project/paper/naphthalene.csv"))
+X = as.data.frame(read.csv("C:\\Users\\Kapelner\\Desktop\\Dropbox\\oed_kh_project\\paper\\naphthalene.csv"))
 plot(X$x, X$y)
 #make a judgment call on what the x-range is for GC instrument
 xmin = 0.3379
@@ -253,6 +253,8 @@ sigma = summary(mod)$sigma
 
 #in the future, we will be running experiments with 10 vials
 n = 10
+
+library(optDesignSlopeInt)
 
 #investigate how our guess of theta0 will affect our results. Use a range of 0.01 to 10 since
 #we are almost absolutely sure the k_H must fall in this window.
