@@ -61,7 +61,7 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 #' @export
 err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, theta0_max, 
 		theta0 = NULL, beta0 = 1, sigma = 1, RES = 500, Nsim = 5000, 
-		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile
+		error_est = function(est){quantile(est, 0.99) - quantile(est, 0.01)}, #99%ile - 1%ile
 		theta_logged = TRUE, error_pct = TRUE, plot_rhos = FALSE, ...){
 	if (theta_logged){
 		theta0s = seq(log(theta0_min), log(theta0_max), length.out = RES) / log(10)
@@ -125,10 +125,10 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 		
 
 	
-	abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")
 	if (!is.null(theta0)){
 		abline(v = ifelse(theta_logged, log(theta0) / log(10), theta0), col = "red")
 	}
+	abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")
 	
 	if (plot_rhos){
 		plot(theta0s, rhos, 
@@ -137,10 +137,10 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 				xlab = ifelse(theta_logged, "log_10(theta0) hypothesis", "theta0 hypothesis"),
 				...)
 		
-		abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")
 		if (!is.null(theta0)){
 			abline(v = ifelse(theta_logged, log(theta0) / log(10), theta0), col = "red")
 		}
+		abline(v = ifelse(theta_logged, log(theta) / log(10), theta), col = "green")
 	}	
 	
 	#return the simulated results only if user cares
@@ -184,8 +184,8 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 design_bakeoff = function(xmin, xmax, designs, 
 		gen_resp = function(xs){1 + 2 * xs + rnorm(length(xs), 0, 1)}, 
 		Nsim = 1000, l_quantile_display = 0.025, u_quantile_display = 0.975,
-		error_est = function(est){quantile(est, 0.9) - quantile(est, 0.1)}, #90%ile - 10%ile i.e the interdecile range
-		num_digits_round = 2,
+		error_est = function(est){quantile(est, 0.99) - quantile(est, 0.01)}, #99%ile - 1%ile i.e the interdecile range
+		num_digits_round = 3,
 		draw_theta_at = NULL, ...){
 	num_designs = nrow(designs)
 	n = ncol(designs)
