@@ -316,8 +316,7 @@ gen_resp = function(xs, beta0 = 3.923e-09, sigma = 3.151e-10){
 	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, sigma)
 }
 
-previous_paper_study_reps = c(3,3,3,2,2,3,3,1,1)
-previous_paper_theta0s = rep(1, 9)
+previous_paper_study_reps = c(3,3,3,2,2,3,3,1,3,1)
 previous_paper_designs = list(
 	c(80.9, 161.8, 242.8, 323.7),
 	c(39 ,199, 499, 999),
@@ -327,8 +326,10 @@ previous_paper_designs = list(
 	c(10.2, 43.8, 111, 447),
 	c(4.5, 6.3, 10, 21 ),
 	c(39 ,199, 499, 999 ),
-	c( 4.6, 6.4, 10.2, 21.3)
+	c(1.5, 2, 2.5, 3, 4, 5, 7, 10),
+	c(4.6, 6.4, 10.2, 21.3)
 )
+previous_paper_theta0s = rep(1, length(previous_paper_study_reps))
 Nsim_figs = 10000
 
 for (i in 1 : length(previous_paper_study_reps)){
