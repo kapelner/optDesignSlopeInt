@@ -26,6 +26,8 @@ err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta, theta0_min, theta0_max,
 \item{theta0}{The guess used to construct the experimental design. Specify only if you wish to see this 
 value plotted. Default is \code{NULL}.}
 
+\item{beta0}{A guess to be used for the intercept. Defaults to \code{1}.}
+
 \item{sigma}{A guess to be used for the homoskedastic variance of the measurement errors. If known accurately,
 then the standard errors (i.e. the y-axis on the plot) will be accurate. Otherwise, the standard
 errors are useful only when compared to each other in a relative sense. Defaults to \code{1}.}

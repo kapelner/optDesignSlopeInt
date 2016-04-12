@@ -22,6 +22,13 @@
 #' @return 					An n-vector of x-values which specifies the optimal design
 #' 
 #' @author 					Adam Kapelner
+#' @examples 
+#' xmin = 5 / 15
+#' xmax = 19 / 1
+#' n = 10
+#' theta0 = 0.053
+#' opt_homo_design = oed_for_slope_over_intercept(n, xmin, xmax, theta0)
+#' table(opt_homo_design)
 #' @export
 oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, MaxIter = 6000, MaxFunEvals = 6000, TolFun = 1e-6, NUM_RAND_STARTS = 50){
 	#throw errors here
@@ -43,6 +50,7 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 #' 						value plotted. Default is \code{NULL}.
 #' @param theta0_min 	Simulating over different guesses of theta0, this is the minimum guess.
 #' @param theta0_max 	Simulating over different guesses of theta0, this is the maximum guess.
+#' @param beta0	 	A guess to be used for the intercept. Defaults to \code{1}.
 #' @param sigma 		A guess to be used for the homoskedastic variance of the measurement errors. If known accurately,
 #' 						then the standard errors (i.e. the y-axis on the plot) will be accurate. Otherwise, the standard
 #' 						errors are useful only when compared to each other in a relative sense. Defaults to \code{1}.

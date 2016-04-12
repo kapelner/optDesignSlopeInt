@@ -42,6 +42,14 @@ An n-vector of x-values which specifies the optimal design
 \description{
 Create an optimal design for measuring the slope divided by the intercept
 }
+\examples{
+xmin = 5 / 15
+xmax = 19 / 1
+n = 10
+theta0 = 0.053
+opt_homo_design = oed_for_slope_over_intercept(n, xmin, xmax, theta0)
+table(opt_homo_design)
+}
 \author{
 Adam Kapelner
 }
