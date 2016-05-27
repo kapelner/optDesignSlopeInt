@@ -277,3 +277,15 @@ experimental_results = function(xs, ys, alpha = 0.05, B = 1000){
 		B = B
 	)
 }
+
+#' This is data for the PRV measurement of the k_H of Napthalene in water.
+#' See Section 3 of our paper below for more information.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name napth
+#' @usage data(napth)
+#' @format A data frame with 100 rows and 2 variables
+#' @author Adam Kapelner \email{kapelner@@qc.cuny.edu}
+#' @references \url{https://arxiv.org/abs/1604.03480}
+NULL

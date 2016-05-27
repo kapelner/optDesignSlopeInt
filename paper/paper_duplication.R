@@ -1,5 +1,6 @@
 library(optDesignSlopeInt)
-setwd("C:\\Users\\Kapelner\\Desktop\\Dropbox\\oed_kh_project")
+data(napth)
+X = napth; rm(napth)
 
 
 ##### Section 3.2
@@ -16,8 +17,7 @@ table(opt_homo_design)
 ##Fig 1
 
 #trial run data
-X = read.csv("napth.csv")
-mod = lm(X[,2]~ X[,1])
+mod = lm(X[,2] ~ X[,1])
 summary(mod)
 
 Nsim_figs = 50000
