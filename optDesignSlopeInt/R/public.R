@@ -183,6 +183,7 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 #' @param num_digits_round			The number of digits to round the error results. Default is 2.
 #' @param draw_theta_at 			If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 #' 									it is specified here. The default is \code{NULL} with no line being drawn.
+#' @param xlab_names						
 #' @param ...						Additional arguments passed to the \code{boxplot} function.
 #' 
 #' @return 							A list with the simulated estimates and error estimates for each design.
@@ -191,10 +192,12 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 #' @export
 design_bakeoff = function(xmin, xmax, designs, 
 		gen_resp = function(xs){1 + 2 * xs + rnorm(length(xs), 0, 1)}, 
-		Nsim = 1000, l_quantile_display = 0.025, u_quantile_display = 0.975,
+		Nsim = 1000, l_quantile_display = 0.01, u_quantile_display = 0.99,
 		error_est = function(est){quantile(est, 0.99) - quantile(est, 0.01)}, #99%ile - 1%ile i.e the interdecile range
 		num_digits_round = 3,
-		draw_theta_at = NULL, ...){
+		draw_theta_at = NULL, 
+		xlab_names = NULL,
+		...){
 	num_designs = nrow(designs)
 	n = ncol(designs)
 	
@@ -214,11 +217,17 @@ design_bakeoff = function(xmin, xmax, designs,
 	for (d in 1 : num_designs){
 		l[[d]] = ests[, d]
 	}
+		
+	#create a default for the name label on the x-axis
+	xlab_names = ifelse(rep(is.null(xlab_names), num_designs), (1 : num_designs), xlab_names)
+	#now add errors to it
+	xlab_names = paste(xlab_names, rep(" (", 2) , round(error_ests, num_digits_round), rep(")", 2), sep = "")
+	
 	boxplot(l, ylim = quantile(c(ests), c(l_quantile_display, u_quantile_display)), 
 			main = "Bakeoff: Error Estimates for Many Designs",  
 			ylab = "theta-hat", 
-			xlab = paste("Error Results:", paste(round(error_ests, num_digits_round), collapse = ", ")), 
-			names = 1 : num_designs,
+			xlab = "Design (Error)",
+			names = xlab_names,
 			...)
 	if (!is.null(draw_theta_at)){
 		abline(h = draw_theta_at, col = "blue")

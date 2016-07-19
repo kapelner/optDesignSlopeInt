@@ -6,10 +6,10 @@
 for a number of designs}
 \usage{
 design_bakeoff(xmin, xmax, designs, gen_resp = function(xs) {     1 + 2 * xs +
-  rnorm(length(xs), 0, 1) }, Nsim = 1000, l_quantile_display = 0.025,
-  u_quantile_display = 0.975, error_est = function(est) {     quantile(est,
+  rnorm(length(xs), 0, 1) }, Nsim = 1000, l_quantile_display = 0.01,
+  u_quantile_display = 0.99, error_est = function(est) {     quantile(est,
   0.99) - quantile(est, 0.01) }, num_digits_round = 3, draw_theta_at = NULL,
-  ...)
+  xlab_names = NULL, ...)
 }
 \arguments{
 \item{xmin}{The minimum value of the independent variable.}
@@ -34,6 +34,8 @@ is unstable at low sample sizes. The default is the 90 percentile minus the 10 p
 
 \item{draw_theta_at}{If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 it is specified here. The default is \code{NULL} with no line being drawn.}
+
+\item{xlab_names}{}
 
 \item{...}{Additional arguments passed to the \code{boxplot} function.}
 }

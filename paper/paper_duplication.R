@@ -1,6 +1,23 @@
+#to install the package, first git clone the repository, cd into the directory then type "R CMD INSTALL optDesignSlopeInt".
+
 library(optDesignSlopeInt)
 data(napth)
 X = napth; rm(napth)
+
+##### Section 3.1
+
+# Fig 1a
+par(mar = c(4.5,4,0.5,0.5))
+plot(X$Vg_Vl, X$InvGC, xlab = "Gas-to-Liquid Ratio", ylab = "Inverse GC Area", main = "", cex = 1, pch = 1)
+abline(v = 0.342, col = "red", lty = 3)
+abline(v = 15, col = "red", lty = 3)
+
+#we now "cut" our data
+X = X[X$Vg_Vl >= 0.342 & X$Vg_Vl <= 15, ]
+
+# Fig 1b
+par(mar = c(4.5,2.5,0.5,0.5))
+plot(X$Vg_Vl, X$InvGC, xlab = "Gas-to-Liquid Ratio", ylab = "", main = "", cex = 1, pch = 1)
 
 
 ##### Section 3.2
@@ -28,8 +45,10 @@ designs = rbind(
 gen_resp = function(xs, beta0 = 3.923e-09, sigma = 3.151e-10){
 	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, sigma)
 }
+
+#Fig 2
 res = design_bakeoff(xmin, xmax, designs, draw_theta_at = theta0,
-		gen_resp = gen_resp, Nsim = Nsim_figs)
+		gen_resp = gen_resp, Nsim = Nsim_figs, xlab_names = c("Evenly Spaced", "Optimal"))
 
 #to get the rmse (similar to standard error)
 intercentile_perf = lapply(res$ests, function(ests){quantile(ests, 0.99) - quantile(ests, 0.01)})
@@ -40,8 +59,9 @@ vars = lapply(res$ests, function(ests){var(ests)})
 vars[[1]] / vars[[2]]
 
 
+##### Section 3.4
 
-##Fig 2
+##Fig 3
 fig2_res = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, 
 				theta = 0.053, theta0_min = 0.005, theta0_max = 1, beta0 = 3.923e-09, sigma =  3.151e-10,
 				theta0 = theta0, Nsim = Nsim_figs, plot_rhos = TRUE)
@@ -50,7 +70,7 @@ fig2_res = err_vs_theta0_plot_for_homo_design(n, xmin, xmax,
 
 
 
-##Table 1
+##Table 2
 
 gen_resp = function(xs, beta0 = 3.923e-09){
 	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, 3.151e-10)
@@ -75,244 +95,8 @@ rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
 sum(res$ests[[3]] < 0)
 
 
-
-
-
-
-### NOT IN PAPER
-
-##Table 2
-
-gen_resp = function(xs, beta0 = 1){
-	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, sqrt(sigsq) * f_hetero(xs))
-}
-#example interval
-experimental_results(opt_hetero_design, gen_resp(opt_hetero_design))
-
-#evaluate coverage probs
-Nsim = 1000
-cis_cover = matrix(NA, nrow = 6, ncol = Nsim)
-for (i in 1 : Nsim){
-	ys = gen_resp(opt_hetero_design)
-	cis = experimental_results(opt_hetero_design, ys)$cis
-	cis_cover[, i] = apply(cis, 1, function(ci){ci[1] <= theta0 && ci[2] >= theta0})
-	cat(".")
-}
-rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
-
-##Table 2'
-
-#evaluate coverage probs
-Nsim = 1000
-cis_cover = matrix(NA, nrow = 6, ncol = Nsim)
-for (i in 1 : Nsim){
-	ys = gen_resp(opt_hetero_design_mock)
-	cis = experimental_results(opt_hetero_design_mock, ys)$cis
-	cis_cover[, i] = apply(cis, 1, function(ci){ci[1] <= theta0 && ci[2] >= theta0})
-	cat(".")
-}
-rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
-
-
-### CI STUFF NAIVE HOMO
-naive_design = seq(from = xmin, to = xmax, length.out = n)
-experimental_results(naive_design, gen_resp(naive_design))
-
-cis_cover = matrix(NA, nrow = 7, ncol = Nsim)
-for (i in 1 : Nsim){
-	ys = gen_resp(naive_design)
-	cis = experimental_results(naive_design, ys)$cis
-	cis_cover[, i] = apply(cis, 1, function(ci){ci[1] <= theta0 && ci[2] >= theta0})
-	cat(".")
-}
-rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
-
-
-naive_design = seq(from = xmin, to = xmax, length.out = n)
-experimental_results(naive_design, gen_resp(naive_design))
-
-cis_cover = matrix(NA, nrow = 7, ncol = Nsim)
-for (i in 1 : Nsim){
-	ys = gen_resp(naive_design)
-	cis = experimental_results(naive_design, ys)$cis
-	cis_cover[, i] = apply(cis, 1, function(ci){ci[1] <= theta0 && ci[2] >= theta0})
-	cat(".")
-}
-rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
-
-naive_design = seq(from = xmin, to = xmax, length.out = n)
-experimental_results(naive_design, gen_resp(naive_design))
-
-cis_cover = matrix(NA, nrow = 7, ncol = Nsim)
-for (i in 1 : Nsim){
-	ys = gen_resp(naive_design)
-	cis = experimental_results(naive_design, ys)$cis
-	cis_cover[, i] = apply(cis, 1, function(ci){ci[1] <= theta0 && ci[2] >= theta0})
-	cat(".")
-}
-rowSums(cis_cover == TRUE, na.rm = TRUE) / Nsim
-
-
-
-library(optDesignSlopeInt)
-
-#the "true value" of the k_H of toluene
-theta = 0.05
-#load the raw data in and plot
-X = as.data.frame(read.csv("~/Downloads/toluene.csv"))
-plot(X$x, X$y)
-#make a judgment call on what the x-range is for GC instrument
-xmin = 0.3379
-xmax = 14.437
-#only consider the data in this range
-Xr = X[X$x > xmin & X$x < xmax, ]
-plot(Xr$x, Xr$y)
-#run a regression to get a guess of what sigma is only
-mod = lm(Xr$y ~ Xr$x)
-summary(mod)
-beta0 = coef(mod)[1]
-sigma = summary(mod)$sigma
-
-#in the future, we will be running experiments with 10 vials
-n = 10
-
-#investigate how our guess of theta0 will affect our results. Use a range of 0.01 to 10 since
-#we are almost absolutely sure the k_H must fall in this window.
-err_det = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta = theta, 
-		Nsim = 10000, sigma = sigma,
-		theta0_min = 0.01, theta0_max = 10, plot_rhos = TRUE)
-
-#as an example show what happens if theta is 0.1 instead and graph the truth in green
-err_det = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta = 0.1, 
-		Nsim = 10000, sigma = sigma, theta0 = theta,
-		theta0_min = 0.01, theta0_max = 10, plot_rhos = TRUE)
-
-
-opt_homo_design = oed_for_slope_over_intercept(n, xmin, xmax, theta)
-
-
-designs = rbind(
-		seq(xmin, xmax, length.out = n),
-		c(rep(xmin, n / 2), rep(xmax, n / 2)),
-		opt_homo_design
-)
-
-
-gen_resp = function(xs){
-	beta0 + beta0 * theta * xs + rnorm(length(xs), 0, sigma)
-}
-par(mfrow = c(1, 1))
-res = design_bakeoff(xmin, xmax, designs, 
-		draw_theta_at = theta,
-		gen_resp = gen_resp, 
-		Nsim = 10000)
-
-sd(res$ests[[3]]) / sd(res$ests[[1]])
-
-
-
-
-###################
-
-#the "true value" of the k_H of naphthalene
-theta = 0.05
-#load the raw data in and plot
-X = as.data.frame(read.csv("C:\\Users\\Kapelner\\Desktop\\Dropbox\\oed_kh_project\\paper\\naphthalene.csv"))
-plot(X$x, X$y)
-#make a judgment call on what the x-range is for GC instrument
-xmin = 0.3379
-xmax = 14.437
-#only consider the data in this range
-Xr = X[X$x > xmin & X$x < xmax, ]
-plot(Xr$x, Xr$y)
-#run a regression to get a guess of what sigma is only
-mod = lm(Xr$y ~ Xr$x)
-summary(mod)
-beta0 = coef(mod)[1]
-sigma = summary(mod)$sigma
-
-
-
-#in the future, we will be running experiments with 10 vials
-n = 10
-
-library(optDesignSlopeInt)
-
-#investigate how our guess of theta0 will affect our results. Use a range of 0.01 to 10 since
-#we are almost absolutely sure the k_H must fall in this window.
-err_det = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta = theta, 
-		Nsim = 10000, sigma = sigma,
-		theta0_min = 0.01, theta0_max = 10, plot_rhos = TRUE)
-
-#as an example show what happens if theta is 0.5 instead and graph the truth in green
-err_det = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta = 0.5, 
-		Nsim = 10000, sigma = sigma, theta0 = theta,
-		theta0_min = 0.01, theta0_max = 10, plot_rhos = TRUE)
-
-
-opt_homo_design = oed_for_slope_over_intercept(n, xmin, xmax, theta)
-
-
-designs = rbind(
-		seq(xmin, xmax, length.out = n),
-		c(rep(xmin, n / 2), rep(xmax, n / 2)),
-		opt_homo_design
-)
-
-
-gen_resp = function(xs){
-	beta0 + beta0 * theta * xs + rnorm(length(xs), 0, sigma)
-}
-par(mfrow = c(1, 1))
-res = design_bakeoff(xmin, xmax, designs, 
-		draw_theta_at = theta,
-		gen_resp = gen_resp, 
-		num_digits_round = 4,
-		Nsim = 10000)
-
-sd(res$ests[[3]]) / sd(res$ests[[1]])
-
-##### Section 3.2
-
-#opt design hetero
-f_hetero = function(x){2 * (xmax - x) / (xmax - xmin)}
-opt_hetero_design = oed_for_slope_over_intercept(n, xmin, xmax, theta0, f_hetero = f_hetero)
-
-#note that opt_hetero_design = opt_homo_design, thus do mock case opt design hetero
-n = 100
-opt_homo_design_mock = oed_for_slope_over_intercept(n, xmin, xmax, theta0)
-table(opt_homo_design_mock)
-opt_hetero_design_mock = oed_for_slope_over_intercept(n, xmin, xmax, theta0, f_hetero = f_hetero)
-table(opt_hetero_design_mock)
-
-##Fig 3
-sigsq = 1
-
-designs = rbind(
-		seq(xmin, xmax, length.out = n),
-		c(rep(xmin, n / 2), rep(xmax, n / 2)),
-		opt_homo_design_mock,
-		opt_hetero_design_mock
-)
-gen_resp = function(xs, beta0 = 1){
-	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, sqrt(sigsq) * f_hetero(xs))
-}
-res = design_bakeoff(xmin, xmax, designs, 
-		draw_theta_at = theta0,
-		gen_resp = gen_resp, 
-		Nsim = Nsim_figs)
-#to get the rmse (similar to standard error)
-lapply(res$ests, function(ests){sqrt(sum((ests - theta0)^2) / Nsim_figs)})
-
-
-fig2B_res = err_vs_theta0_plot_for_homo_design(n, xmin, xmax, 
-		theta = 0.5, theta0_min = 0.001, theta0_max = 5, beta0 = 3.923e-09, sigma =  3.151e-10, 
-		theta0 = theta0, Nsim = Nsim_figs, plot_rhos = TRUE)
-
-
-
 #Section 4
-gen_resp = function(xs, beta0 = 3.923e-09, sigma = 3.151e-10){
+gen_resp = function(xs, beta0 = 3.923e-09, sigma = 5 * 3.151e-10){
 	beta0 + beta0 * theta0 * xs + rnorm(length(xs), 0, sigma)
 }
 
@@ -332,6 +116,9 @@ previous_paper_designs = list(
 previous_paper_theta0s = rep(1, length(previous_paper_study_reps))
 Nsim_figs = 10000
 
+eff_results = array(NA, length(previous_paper_study_reps))
+
+
 for (i in 1 : length(previous_paper_study_reps)){
 	r = previous_paper_study_reps[i]
 	des =  previous_paper_designs[[i]]
@@ -346,10 +133,13 @@ for (i in 1 : length(previous_paper_study_reps)){
 		draw_theta_at = theta0,
 		gen_resp = gen_resp, 
 		Nsim = Nsim_figs)
-	
-	cat("design #", i, "eff gain in std err", (sd(res$ests[[1]]) -  sd(res$ests[[2]])) / sd(res$ests[[2]]), "\n")
+	eff_est = (sd(res$ests[[1]]) -  sd(res$ests[[2]])) / sd(res$ests[[2]])
+	eff_results[i] = eff_est
+	cat("design #", i, "eff gain in std err", eff_est, "\n")
 }
 
-
-
+#Table 3 is generated by replacing the 1 * sigma in line 97 with 0.5 * sigma and 2 * sigma 
+t(t(round(eff_results * 100)))
+#in the text
+mean(eff_results * 100)
 
