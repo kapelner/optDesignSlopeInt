@@ -183,7 +183,7 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 #' @param num_digits_round			The number of digits to round the error results. Default is 2.
 #' @param draw_theta_at 			If the user wishes to draw a horizontal line marking theta (to checked biasedness)
 #' 									it is specified here. The default is \code{NULL} with no line being drawn.
-#' @param xlab_names						
+#' @param xlab_names				Text for the x-grid labels. This vector's size should equal \code{lenth(designs)}.	
 #' @param ...						Additional arguments passed to the \code{boxplot} function.
 #' 
 #' @return 							A list with the simulated estimates and error estimates for each design.
