@@ -28,7 +28,7 @@ ratio_density_ci = function(alpha, b0, b1, XtXinv, s_e){
 }
 
 bayesian_weighting_ci = function(alpha, B, n, xs, ys){
-	ws = rdirichlet(B, rep(1, n)) #stick breaking in n dimensions
+	ws = MCMCpack::rdirichlet(B, rep(1, n)) #stick breaking in n dimensions
 	thetahat_bs = array(NA, B)
 	for (b in 1 : B){
 		mod = lm(ys ~ xs, weights = ws[b, ])

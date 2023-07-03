@@ -35,7 +35,8 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 	if (is.null(f_hetero)){
 		oed_for_slope_over_intercept_homo(n, xmin, xmax, theta0)
 	} else {
-		oed_for_slope_over_intercept_hetero(n, xmin, xmax, theta0, f_hetero, MaxIter, MaxFunEvals, TolFun, NUM_RAND_STARTS)
+		stop("This function currently is unavailable since the neldermead package became archived. If the neldermead package is back on cran, please email me at kapelner@qc.cuny.edu and I will fix.")
+#		oed_for_slope_over_intercept_hetero(n, xmin, xmax, theta0, f_hetero, MaxIter, MaxFunEvals, TolFun, NUM_RAND_STARTS)
 	}
 }
 
@@ -67,6 +68,16 @@ oed_for_slope_over_intercept = function(n, xmin, xmax, theta0, f_hetero = NULL, 
 #' 
 #' @author 				Adam Kapelner
 #' @export
+#' @examples 
+#' \donttest{
+#' xmin = 5 / 15
+#' xmax = 19 / 1
+#' n = 10
+#' theta0 = 0.053
+#' plot_info = err_vs_theta0_plot_for_homo_design(
+#'   n, xmin, xmax, theta0, theta0_min = 0.001, theta0_max = 1
+#' )
+#' }
 err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, theta0_max, 
 		theta0 = NULL, beta0 = 1, sigma = 1, RES = 500, Nsim = 5000, 
 		error_est = function(est){quantile(est, 0.99) - quantile(est, 0.01)}, #99%ile - 1%ile
@@ -163,10 +174,6 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 	))		
 }
 
-
-
-
-
 #' A visualiation for comparing slope-divided-by-intercept estimates
 #' for a number of designs
 #' 
@@ -190,6 +197,15 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 #' 
 #' @author 							Adam Kapelner
 #' @export
+#' @examples 
+#' xmin = 5 / 15
+#' xmax = 19 / 1
+#' n = 10 #must be even for this demo
+#' designs = rbind(
+#'   c(rep(xmin, n / 2), rep(xmax, n / 2)),       #design A
+#'   seq(from = xmin, to = xmax, length.out = n)  #design B
+#' )
+#' design_bakeoff_info = design_bakeoff(xmin, xmax, designs) #design A wins
 design_bakeoff = function(xmin, xmax, designs, 
 		gen_resp = function(xs){1 + 2 * xs + rnorm(length(xs), 0, 1)}, 
 		Nsim = 1000, l_quantile_display = 0.01, u_quantile_display = 0.99,
@@ -247,6 +263,13 @@ design_bakeoff = function(xmin, xmax, designs,
 #' 
 #' @author			Adam Kapelner
 #' @export
+#' @examples
+#' n = 10 
+#' xmin = 5 / 15
+#' xmax = 19 / 1
+#' xs = runif(n, xmin, xmax)
+#' ys = 2 + 3 * xs + rnorm(n)
+#' experimental_results_info = experimental_results(xs, ys)
 experimental_results = function(xs, ys, alpha = 0.05, B = 1000){
 	mod = lm(ys ~ xs)
 	b0 = coef(mod)[1]

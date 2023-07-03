@@ -5,10 +5,26 @@
 \title{Plots a standard error estimate of thetahat (slope over intercept) over a range of possible theta0 values
 in order to investigate robustness of the the initial theta0 guess.}
 \usage{
-err_vs_theta0_plot_for_homo_design(n, xmin, xmax, theta, theta0_min, theta0_max,
-  theta0 = NULL, beta0 = 1, sigma = 1, RES = 500, Nsim = 5000,
-  error_est = function(est) {     quantile(est, 0.99) - quantile(est, 0.01) },
-  theta_logged = TRUE, error_pct = TRUE, plot_rhos = FALSE, ...)
+err_vs_theta0_plot_for_homo_design(
+  n,
+  xmin,
+  xmax,
+  theta,
+  theta0_min,
+  theta0_max,
+  theta0 = NULL,
+  beta0 = 1,
+  sigma = 1,
+  RES = 500,
+  Nsim = 5000,
+  error_est = function(est) {
+     quantile(est, 0.99) - quantile(est, 0.01)
+ },
+  theta_logged = TRUE,
+  error_pct = TRUE,
+  plot_rhos = FALSE,
+  ...
+)
 }
 \arguments{
 \item{n}{The number of experimental runs.}
@@ -54,7 +70,17 @@ A list with original parameters as well as data from the simulation
 Plots a standard error estimate of thetahat (slope over intercept) over a range of possible theta0 values
 in order to investigate robustness of the the initial theta0 guess.
 }
+\examples{
+\donttest{
+xmin = 5 / 15
+xmax = 19 / 1
+n = 10
+theta0 = 0.053
+plot_info = err_vs_theta0_plot_for_homo_design(
+  n, xmin, xmax, theta0, theta0_min = 0.001, theta0_max = 1
+)
+}
+}
 \author{
 Adam Kapelner
 }
-

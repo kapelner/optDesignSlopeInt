@@ -5,11 +5,24 @@
 \title{A visualiation for comparing slope-divided-by-intercept estimates
 for a number of designs}
 \usage{
-design_bakeoff(xmin, xmax, designs, gen_resp = function(xs) {     1 + 2 * xs +
-  rnorm(length(xs), 0, 1) }, Nsim = 1000, l_quantile_display = 0.01,
-  u_quantile_display = 0.99, error_est = function(est) {     quantile(est,
-  0.99) - quantile(est, 0.01) }, num_digits_round = 3, draw_theta_at = NULL,
-  xlab_names = NULL, ...)
+design_bakeoff(
+  xmin,
+  xmax,
+  designs,
+  gen_resp = function(xs) {
+     1 + 2 * xs + rnorm(length(xs), 0, 1)
+ },
+  Nsim = 1000,
+  l_quantile_display = 0.01,
+  u_quantile_display = 0.99,
+  error_est = function(est) {
+     quantile(est, 0.99) - quantile(est, 0.01)
+ },
+  num_digits_round = 3,
+  draw_theta_at = NULL,
+  xlab_names = NULL,
+  ...
+)
 }
 \arguments{
 \item{xmin}{The minimum value of the independent variable.}
@@ -46,7 +59,16 @@ A list with the simulated estimates and error estimates for each design.
 A visualiation for comparing slope-divided-by-intercept estimates
 for a number of designs
 }
+\examples{
+xmin = 5 / 15
+xmax = 19 / 1
+n = 10 #must be even for this demo
+designs = rbind(
+  c(rep(xmin, n / 2), rep(xmax, n / 2)),       #design A
+  seq(from = xmin, to = xmax, length.out = n)  #design B
+)
+design_bakeoff_info = design_bakeoff(xmin, xmax, designs) #design A wins
+}
 \author{
 Adam Kapelner
 }
-

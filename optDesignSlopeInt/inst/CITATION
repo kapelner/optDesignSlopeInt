@@ -1,13 +1,18 @@
-citHeader("")
+citHeader("To cite the optDesignSlopeInt package in publications, please use:")
 
-citEntry(
-     entry       = "article",
+bibentry(
+     bibtype     = "article",
 	 title       = "Optimal Experimental Designs for Estimating Henry's Law Constants via the Method of Phase Ratio Variation",
-	 note		 = "working paper",
-	 author      = personList(as.person("Adam Kapelner"), as.person("Abba Krieger"), as.person("William J. Blanford")),
-	 journal     = "Arxiv",
+	 author      = c(
+		person("Adam", "Kapelner", email = "kapelner@qc.cuny.edu", comment = c(ORCID = "0000-0001-5985-6792")),
+		person("Abba", "Krieger", email = "krieger@wharton.upenn.edu"),
+		person("William J.", "Blanford", email = "William.Blanford@qc.cuny.edu")
+	  ),
+	 journal     = "Journal of Chromatography A",
 	 year        = "2016", 
+	 volume      = "1468",
+	 pages       = "183-191",
 	 textVersion = "Kapelner, A., Krieger, A., Blanford, W. J. (2016). Optimal Experimental Designs for Estimating Henry's 
-	 				Law Constants via the Method of Phase Ratio Variation. Arxiv",
-	 header      = "To cite the optDesignSlopeInt package in publications, please use:"
+	 				Law Constants via the Method of Phase Ratio Variation. Journal of Chromatography A, 1468, 183-191",
+	 url         = "https://doi.org/10.1016/j.chroma.2016.08.049"
 )

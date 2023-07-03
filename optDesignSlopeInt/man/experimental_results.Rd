@@ -22,7 +22,14 @@ A list object containing the estimate as well as confidence intervals and parame
 \description{
 Report the results of the experiment as well as confidence intervals.
 }
+\examples{
+n = 10 
+xmin = 5 / 15
+xmax = 19 / 1
+xs = runif(n, xmin, xmax)
+ys = 2 + 3 * xs + rnorm(n)
+experimental_results_info = experimental_results(xs, ys)
+}
 \author{
 Adam Kapelner
 }
-

@@ -5,7 +5,9 @@
 \alias{napth}
 \title{This is data for the PRV measurement of the k_H of Napthalene in water.
 See Section 3 of our paper below for more information.}
-\format{A data frame with 100 rows and 2 variables}
+\format{
+A data frame with 100 rows and 2 variables
+}
 \usage{
 data(napth)
 }
@@ -13,11 +15,10 @@ data(napth)
 This is data for the PRV measurement of the k_H of Napthalene in water.
 See Section 3 of our paper below for more information.
 }
-\author{
-Adam Kapelner \email{kapelner@qc.cuny.edu}
-}
 \references{
 \url{https://arxiv.org/abs/1604.03480}
 }
+\author{
+Adam Kapelner \email{kapelner@qc.cuny.edu}
+}
 \keyword{datasets}
-

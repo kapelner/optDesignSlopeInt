@@ -3,7 +3,6 @@
 \docType{package}
 \name{optDesignSlopeInt}
 \alias{optDesignSlopeInt}
-\alias{optDesignSlopeInt-package}
 \title{Optimal Designs for Estimating the Slope Divided by the Intercept}
 \description{
 Software which helps practitioners optimally design experiments that measure the slope divided by the intercept.
@@ -11,13 +10,6 @@ Software which helps practitioners optimally design experiments that measure the
 \author{
 Adam Kapelner \email{kapelner@qc.cuny.edu}
 }
-\references{
-TK
-}
-\keyword{Design,}
-\keyword{Experimental}
-\keyword{Slope}
-\keyword{by}
-\keyword{divided}
-\keyword{intercept}
-
+\keyword{Design}
+\keyword{Experiments}
+\keyword{Optimality}

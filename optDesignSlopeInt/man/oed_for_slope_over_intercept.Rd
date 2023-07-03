@@ -4,9 +4,17 @@
 \alias{oed_for_slope_over_intercept}
 \title{Create an optimal design for measuring the slope divided by the intercept}
 \usage{
-oed_for_slope_over_intercept(n, xmin, xmax, theta0, f_hetero = NULL,
-  MaxIter = 6000, MaxFunEvals = 6000, TolFun = 1e-06,
-  NUM_RAND_STARTS = 50)
+oed_for_slope_over_intercept(
+  n,
+  xmin,
+  xmax,
+  theta0,
+  f_hetero = NULL,
+  MaxIter = 6000,
+  MaxFunEvals = 6000,
+  TolFun = 1e-06,
+  NUM_RAND_STARTS = 50
+)
 }
 \arguments{
 \item{n}{The number of experimental runs.}
@@ -53,4 +61,3 @@ table(opt_homo_design)
 \author{
 Adam Kapelner
 }
-

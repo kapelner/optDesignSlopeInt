@@ -1,17 +1,19 @@
 Package: optDesignSlopeInt
 Type: Package
 Title: Optimal Designs for Estimating the Slope Divided by the Intercept
-Version: 1.01
-Date: 2016-7-20
-Author: Adam Kapelner, Abba Krieger and William J. Blanford
+Version: 1.1.1
+Date: 2023-07-03
+Authors@R: c(
+	person("Adam", "Kapelner", email = "kapelner@qc.cuny.edu", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-5985-6792")),
+	person("Abba", "Krieger", email = "krieger@wharton.upenn.edu", role = c("rev")),
+	person("William J.", "Blanford", email = "William.Blanford@qc.cuny.edu", role = c("rev"))
+  )
 Maintainer: Adam Kapelner <kapelner@qc.cuny.edu>
-Description: Software which helps practitioners optimally design experiments
+Description: Aids practitioners optimally design experiments
     that measure the slope divided by the intercept (originally invented for HSGC
     measurements) and provides confidence intervals. Other useful tools herein.
+Encoding: UTF-8
 License: GPL-3
-Depends:
-    R (>= 3.0),
-    neldermead,
-    MCMCpack
-Imports: stats, graphics
-RoxygenNote: 5.0.1
+Depends: R (>= 4.0.0)
+Imports: stats, graphics, MCMCpack
+RoxygenNote: 7.2.3
