@@ -123,6 +123,8 @@ err_vs_theta0_plot_for_homo_design = function(n, xmin, xmax, theta, theta0_min, 
 	}
 	
 	if (plot_rhos){
+		oldpar <- par(no.readonly = TRUE)   # code line i
+		on.exit(par(oldpar))            	# code line i + 1
 		par(mfrow = c(1, 2))
 	}
 	

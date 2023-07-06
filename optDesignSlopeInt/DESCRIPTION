@@ -9,9 +9,8 @@ Authors@R: c(
 	person("William J.", "Blanford", email = "William.Blanford@qc.cuny.edu", role = c("rev"))
   )
 Maintainer: Adam Kapelner <kapelner@qc.cuny.edu>
-Description: Aids practitioners optimally design experiments
-    that measure the slope divided by the intercept (originally invented for HSGC
-    measurements) and provides confidence intervals. Other useful tools herein.
+Description: Aids practitioners to optimally design experiments
+    that measure the slope divided by the intercept and provides confidence intervals for the ratio.
 Encoding: UTF-8
 License: GPL-3
 Depends: R (>= 4.0.0)
