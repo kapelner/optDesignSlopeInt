@@ -15,4 +15,6 @@ Encoding: UTF-8
 License: GPL-3
 Depends: R (>= 4.0.0)
 Imports: stats, graphics, MCMCpack
+URL: https://github.com/kapelner/optDesignSlopeInt
+BugReports: https://github.com/kapelner/optDesignSlopeInt/issues
 RoxygenNote: 7.2.3
