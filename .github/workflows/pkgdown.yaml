@@ -9,21 +9,18 @@ on:
 
 name: pkgdown.yaml
 
-permissions: read-all
+permissions:
+  contents: read
 
-defaults:
-  run:
-    working-directory: optDesignSlopeInt
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  pkgdown:
+  build:
     runs-on: ubuntu-latest
-    # only build/deploy on pushes to the default branch, not on PRs
-    if: github.event_name != 'pull_request'
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@v4
 
@@ -44,10 +41,20 @@ jobs:
         shell: Rscript {0}
         working-directory: optDesignSlopeInt
 
-      - name: Deploy to GitHub pages 🚀
-        if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@v4.5.0
+      - uses: actions/upload-pages-artifact@v3
         with:
-          clean: false
-          branch: gh-pages
-          folder: optDesignSlopeInt/docs
+          path: optDesignSlopeInt/docs
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
