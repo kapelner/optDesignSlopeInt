@@ -1,0 +1,41 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite the article below."
+type: software
+title: "optDesignSlopeInt: Optimal Designs for Estimating the Slope Divided by the Intercept"
+version: 1.1.1
+date-released: "2023-07-03"
+authors:
+  - family-names: Kapelner
+    given-names: Adam
+    email: kapelner@qc.cuny.edu
+    orcid: "https://orcid.org/0000-0001-5985-6792"
+repository-code: "https://github.com/kapelner/optDesignSlopeInt"
+url: "https://kapelner.github.io/optDesignSlopeInt/"
+license: GPL-3.0
+keywords:
+  - experimental design
+  - optimal design
+  - calibration
+  - slope over intercept
+  - Henry's law constant
+abstract: >
+  optDesignSlopeInt aids practitioners to optimally design experiments that
+  measure the slope divided by the intercept, and provides confidence
+  intervals for the ratio.
+preferred-citation:
+  type: article
+  title: "Optimal Experimental Designs for Estimating Henry's Law Constants via the Method of Phase Ratio Variation"
+  authors:
+    - family-names: Kapelner
+      given-names: Adam
+      orcid: "https://orcid.org/0000-0001-5985-6792"
+    - family-names: Krieger
+      given-names: Abba
+    - family-names: Blanford
+      given-names: "William J."
+  journal: "Journal of Chromatography A"
+  year: 2016
+  volume: 1468
+  start: 183
+  end: 191
+  doi: "10.1016/j.chroma.2016.08.049"
