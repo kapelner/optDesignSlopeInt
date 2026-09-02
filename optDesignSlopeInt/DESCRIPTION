@@ -11,6 +11,9 @@ Authors@R: c(
 Maintainer: Adam Kapelner <kapelner@qc.cuny.edu>
 Description: Aids practitioners to optimally design experiments
     that measure the slope divided by the intercept and provides confidence intervals for the ratio.
+X-schema.org-keywords: optimal experimental design, design of experiments,
+    linear regression, ratio estimation, slope-to-intercept ratio,
+    confidence intervals, calibration, Henry's law constant
 Encoding: UTF-8
 License: GPL-3
 Depends: R (>= 4.0.0)

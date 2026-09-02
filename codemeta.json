@@ -14,10 +14,13 @@
   ],
   "runtimePlatform": "R version 4.0.0 or higher",
   "keywords": [
-    "experimental design",
-    "optimal design",
+    "optimal experimental design",
+    "design of experiments",
+    "linear regression",
+    "ratio estimation",
+    "slope-to-intercept ratio",
+    "confidence intervals",
     "calibration",
-    "slope over intercept",
     "Henry's law constant"
   ],
   "author": [
