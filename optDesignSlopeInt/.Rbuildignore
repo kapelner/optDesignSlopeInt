@@ -1,0 +1,6 @@
+^_pkgdown\.yml$
+^pkgdown$
+^docs$
+^\.project$
+^\.settings$
+^\.claude$

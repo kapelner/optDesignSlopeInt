@@ -1,0 +1,14 @@
+{
+  "name": "optDesignSlopeInt: Optimal Designs for Estimating the Slope Divided by the Intercept",
+  "short_name": "optDesignSlopeInt",
+  "icons": [
+    {
+      "src": "favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#012350",
+  "background_color": "#012350",
+  "display": "standalone"
+}
