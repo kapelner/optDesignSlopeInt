@@ -1,4 +1,4 @@
-# Optimal Design For Experiments Measuring Slope over the Intercept
+# Optimal Design For Experiments Measuring Slope over the Intercept <img src="optDesignSlopeInt/man/figures/logo.png" align="right" height="139" alt="optDesignSlopeInt hex logo" />
 
 [![CRAN](https://www.r-pkg.org/badges/version/optDesignSlopeInt)](https://CRAN.R-project.org/package=optDesignSlopeInt)
 [![R-CMD-check](https://github.com/kapelner/optDesignSlopeInt/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kapelner/optDesignSlopeInt/actions/workflows/R-CMD-check.yaml)
